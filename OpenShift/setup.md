@@ -6,9 +6,7 @@ category: OpenShift
 
 Setting up the required OpenShift objects for deploying an application is done either via the CLI tool AOC or via the WebGUI Aurora Console. In order to do this some deploy time metadata is needed. 
 
-This metadata is configured using several json files that are merged together into a single json file. This json description is then transformed into OpenShift objects via a seperate Controller.
-
-The following features can be configured in the boober files:
+The following features can be configured in the deploy time metadata:
  - location of the artifact in Nexus that we are deploying
  - what database schemas to generate/reuse
  - do you need a security token for secure communication?
