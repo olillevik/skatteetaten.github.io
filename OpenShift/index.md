@@ -22,6 +22,10 @@ the need for a common platform for running and handling the vast amount of micro
 test and reference environments that the project produced, and that would be produced by even larger projects down the 
 line. 
 
+The Norwegian Tax Administration started out as a typical Oracle shop with lots of Forms and PL/SQL. Before MAG the standard development plattform was based on Java EE in the first version of the Aurora Plattform. MAG introduced plain old Java SE as the runtime plattform in the second installment of the Aurora Plattform.
+
+TODO: Formulate the transition between oracle and javaEE better.
+
 A technology evaluation phase revealed the Red Hat OpenShift Container Platform (then Red Hat OpenShift Origin 3.0) to
 be the most appropriate technology to base a new common platform on. Most of 2015 was spent on getting the first few 
 applications successfully running on OpenShift and device a suitable strategy for running, configuring and managing all 
@@ -40,8 +44,6 @@ they became collectively known as the Aurora OpenShift Platform by the end of 20
 
 In December 2016 it was decided that as much possible of the Aurora OpenShift Platform should be open sourced under
 an APL 2.0 compatible license.
-
-TODO: Need some Java in here.
 
 
 ## What is the Aurora OpenShift Platform?
