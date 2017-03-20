@@ -6,7 +6,7 @@ layout: home
 
 ## Introduction
 
-Welcome to the Aurora OpenShift Platform of the Norwegian Tax Administration (NTA) on GitHub. The Norwegian Tax 
+Welcome to the Aurora OpenShift Platform of The Norwegian Tax Administration (TNTA?) on GitHub. The Norwegian Tax 
 Administration is an agency under the authority of the Ministry of Finance and is responsible for taxation and the 
 population register.
 
@@ -65,7 +65,7 @@ like;
  * What would be the benefit for teams to develop and maintain their own scripts and tools for handing deployment and 
  configuration across different environments?
  
-The Aurora OpenShift Platform is everything the Norwegian Tax Administration has developed to support infrastructure
+The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
 automation, application configuration, deployment and management, common application images for technologies in use
 (currently Java and Node) and common build and versioning mechanism for application archives and docker images. The
 main user facing components implementing these mechanisms are:
@@ -79,14 +79,6 @@ applications across teams and environments.
  * Architect: A Docker image that implements our image build process for all our supported runtime technologies
  * Base Images: A set of Alpine Linux based Docker Images that all our applications use
 
-
-
-
-
-
-Skatteetaten (The Norwegian Tax Authority) is currently in the process of using a new development platform based upon [OpenShift](https://www.openshift.org/).
-
-We call our platform `Aurora OpenShift` and the services we have created on top of OpenShift will soon be open sourced under APL 2.0 license.
 
 ### The architecture behind Aurora OpenShift
 
@@ -105,7 +97,7 @@ We call our platform `Aurora OpenShift` and the services we have created on top 
    - Section Two: Implementation details; Boober, the Database Hotel API, SKAP, Marjory, Wembley etc.
  
  * A significantly more meaty introduction that includes more background information (not necessarily in the same order);
-   - What is the responsibility of the Norwegian Tax Authority?
+   - What is the responsibility of The Norwegian Tax Authority?
    - A short history of the Aurora OpenShift platform (even before it was called the Aurora OpenShift platform)
    - What are the problems the Aurora OpenShift platform set out to solve? Is it solving them right now? Why did we decide to build our own set of tools and abstractions on top of OpenShift and other relevant infrastructure components. Common Components, Business Applications, Application "clusters" - Environments (dozens of test and development envronments)
    - What kinds of applications are/will be running on the Aurora OpenShift platform?
