@@ -13,6 +13,7 @@ population register.
 These pages on GitHub is the home of the initiative to open source the platform that runs most of the NTA's digital tax
 and customs services; the Aurora OpenShift Platform.
 
+
 ## A Short History 
 
 The work on what would become the Aurora OpenShift Platform started late in 2014 in the wake of a major project to 
@@ -39,6 +40,48 @@ they became collectively known as the Aurora OpenShift Platform by the end of 20
 
 In December 2016 it was decided that as much possible of the Aurora OpenShift Platform should be open sourced under
 an APL 2.0 compatible license.
+
+TODO: Need some Java in here.
+
+
+## What is the Aurora OpenShift Platform?
+
+Even before we started exploring OpenShift we knew that we would have to automate integration with our existing
+infrastructure regardless of the platform we would end up using - so doing some sort of common initiative to provide
+automation and integration services was given from the get-go. As we familiarized ourselves with OpenShift we saw
+that there were several other areas that would also benefit from a central, common effort.
+
+One of the things that struck us after getting some experience with OpenShift was how flexible it was to work with.
+Although the platform certainly comes with its fair share of requirements and idiosyncrasies, we found that there was 
+hardly anything we were not able to do. However, we also very quickly realized that with all this flexibility comes a
+quite steep learning curve on how "to do things right", and allowing individual teams to freely develop their
+own strategies on how to use OpenShift would bear with it a high cost of entry, slower internal adoption and
+difficulties streamlining maintenance and deployment activities across teams. Also, there were few obvious upsides to
+letting teams freely use OpenShift their own way. For instance, we were hard press to find good answers to questions
+like; 
+ * What would be the benefit for teams to develop and maintain their own base image for their Java applications instead 
+ of collaborate on one?
+ * What would be the benefit for teams to device their own Docker Image build processes instead of adopting a common one?
+ * What would be the benefit for teams to develop and maintain their own scripts and tools for handing deployment and 
+ configuration across different environments?
+ 
+The Aurora OpenShift Platform is everything the Norwegian Tax Administration has developed to support infrastructure
+automation, application configuration, deployment and management, common application images for technologies in use
+(currently Java and Node) and common build and versioning mechanism for application archives and docker images. The
+main user facing components implementing these mechanisms are:
+
+ * Aurora Console: The most prominent feature of the Aurora OpenShift platform is the Aurora Console. The Aurora Console is a custom
+built web application that we use in conjunction with the platform provided OpenShift Console to better handle
+applications across teams and environments.
+ * AOC: The Aurora OpenShift Command Line Client. Our custom built CLI that works with a set of high level configuration
+ files that helps managing applications and configuration across environments.
+ * The Aurora API: The API that implements all our custom services. Used by the Aurora Console and AOC
+ * Architect: A Docker image that implements our image build process for all our supported runtime technologies
+ * Base Images: A set of Alpine Linux based Docker Images that all our applications use
+
+
+
+
 
 
 Skatteetaten (The Norwegian Tax Authority) is currently in the process of using a new development platform based upon [OpenShift](https://www.openshift.org/).
