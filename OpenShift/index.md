@@ -13,16 +13,19 @@ population register.
 These pages on GitHub is the home of the initiative to open source the platform that runs part of the TNTA's digital tax
 and customs services; the Aurora OpenShift Platform.
 
+This document will describe what the Aurora OpenShift Platform is and how it came to be. It will also cover our
+development process; how we use the platform to build and deploy our applications, and our guidelines and requirements 
+to applications using the platform.
+
 
 ## A Short History 
 
 The work on what would become the Aurora OpenShift Platform started late in 2014 in the wake of a major project to 
-modernize the handling of the foundational data for most tax calculations in Norway (MAG). The MAG project identified 
-the need for a common platform for running and handling the vast amount of micro services across several development, 
-test and reference environments that the project produced, and that would be produced by even larger projects down the 
-line. 
-
-The Norwegian Tax Administration started out as a typical Oracle shop with lots of Forms and PL/SQL. It then transitioned into a JavaEE shop before MAG embraced a simpler model with Java SE.
+modernize the handling of the foundational data for most tax calculations in Norway - MAG. The MAG project transitioned
+the Norwegian Tax Administration from using Oracle Forms, PL/SQL and Java EE into using simpler Java SE technologies
+with embedded containers. It also identified the need for a common platform for running and handling the vast 
+amount of micro services across development, test and reference environments that the project produced, and that would 
+be produced by even larger projects down the line. 
 
 A technology evaluation phase revealed the Red Hat OpenShift Container Platform (then Red Hat OpenShift Origin 3.0) to
 be the most appropriate technology to base a new common platform on. Most of 2015 was spent on getting the first few 
@@ -66,19 +69,21 @@ like;
  configuration across different environments?
  
 The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
-automation, application configuration, deployment and management, common application images for technologies in use
-(currently Java and Node) and common build and versioning mechanism for application archives and docker images. The
-main user facing components implementing these mechanisms are:
+automation, support application configuration, deployment and management, common application base images
+and common build and versioning mechanism for application archives and docker images.
+
+The main user facing components implementing these mechanisms are:
 
  * Aurora Console: The most prominent feature of the Aurora OpenShift platform is the Aurora Console. The Aurora Console is a custom
 built web application that we use in conjunction with the platform provided OpenShift Console to better handle
 applications across teams and environments.
  * AOC: The Aurora OpenShift Command Line Client. Our custom built CLI that works with a set of high level configuration
  files that helps managing applications and configuration across environments.
- * The Aurora API: The API that implements all our custom services. Used by the Aurora Console and AOC
- * Architect: A Docker image that implements our image build process for all our supported runtime technologies
- * Base Images: A set of Alpine Linux based Docker Images that all our applications use
+ * The Aurora API: The API that implements all our custom services. Used by the Aurora Console and AOC.
+ * Architect: A Docker image that implements the image build process for all our supported runtime technologies
+ * Base Images: A set of Alpine Linux based Docker Images that all our applications are built from
 
+The following sections will describe these components in more detail.
 
 ### The architecture behind Aurora OpenShift
 
