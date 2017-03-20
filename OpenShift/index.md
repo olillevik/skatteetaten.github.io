@@ -38,7 +38,7 @@ automation and integration work. As the tools and services that provided those f
 they became collectively known as the Aurora OpenShift Platform by the end of 2016.
 
 In December 2016 it was decided that as much possible of the Aurora OpenShift Platform should be open sourced under
-a APL 2.0 compatible license.
+an APL 2.0 compatible license.
 
 
 Skatteetaten (The Norwegian Tax Authority) is currently in the process of using a new development platform based upon [OpenShift](https://www.openshift.org/).
