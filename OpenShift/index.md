@@ -6,11 +6,11 @@ layout: home
 
 ## Introduction
 
-Welcome to the Aurora OpenShift Platform of The Norwegian Tax Administration (TNTA?) on GitHub. The Norwegian Tax 
+Welcome to the Aurora OpenShift Platform of [The Norwegian Tax Administration (TNTA)](http://skatteetaten.no/en/person/) on GitHub. The Norwegian Tax 
 Administration is an agency under the authority of the Ministry of Finance and is responsible for taxation and the 
-population register.
+population register. 
 
-These pages on GitHub is the home of the initiative to open source the platform that runs most of the NTA's digital tax
+These pages on GitHub is the home of the initiative to open source the platform that runs part of the TNTA's digital tax
 and customs services; the Aurora OpenShift Platform.
 
 
