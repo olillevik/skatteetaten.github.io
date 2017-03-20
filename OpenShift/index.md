@@ -2,7 +2,44 @@
 layout: home
 ---
 
-## OpenShift
+# The Aurora OpenShift Platform
+
+## Introduction
+
+Welcome to the Aurora OpenShift Platform of the Norwegian Tax Administration (NTA) on GitHub. The Norwegian Tax 
+Administration is an agency under the authority of the Ministry of Finance and is responsible for taxation and the 
+population register.
+
+These pages on GitHub is the home of the initiative to open source the platform that runs most of the NTA's digital tax
+and customs services; the Aurora OpenShift Platform.
+
+## A Short History 
+
+The work on what would become the Aurora OpenShift Platform started late in 2014 in the wake of a major project to 
+modernize the handling of the foundational data for most tax calculations in Norway (MAG). The MAG project identified 
+the need for a common platform for running and handling the vast amount of micro services across several development, 
+test and reference environments that the project produced, and that would be produced by even larger projects down the 
+line. 
+
+A technology evaluation phase revealed the Red Hat OpenShift Container Platform (then Red Hat OpenShift Origin 3.0) to
+be the most appropriate technology to base a new common platform on. Most of 2015 was spent on getting the first few 
+applications successfully running on OpenShift and device a suitable strategy for running, configuring and managing all 
+the applications that would, in time, be running on the platform.
+
+As time passed it became clear that Kubernetes based
+OpenShift was an extremely capable platform for running our applications. We also realized that handling integration
+with the other infrastructure components (like database servers, logging/metrics/monitoring tools, and security
+infrastructure), and handling the sheer amount of application instances and application runtime environments with all
+their associated application versions, configurations and delivery schedules required more than OpenShift alone could
+provide.
+
+In the course of getting the first few applications running on OpenShift we had already done quite a bit of
+automation and integration work. As the tools and services that provided those features matured and got structured,
+they became collectively known as the Aurora OpenShift Platform by the end of 2016.
+
+In December 2016 it was decided that as much possible of the Aurora OpenShift Platform should be open sourced under
+a APL 2.0 compatible license.
+
 
 Skatteetaten (The Norwegian Tax Authority) is currently in the process of using a new development platform based upon [OpenShift](https://www.openshift.org/).
 
