@@ -13,9 +13,9 @@ population register.
 These pages on GitHub is the home of the initiative to open source the platform that runs part of the TNTA's digital tax
 and customs services; the Aurora OpenShift Platform.
 
-This document will describe what the Aurora OpenShift Platform is and how it came to be. It will also cover our
-development process; how we use the platform to build and deploy our applications, and our guidelines and requirements 
-to applications using the platform.
+This document will describe what the Aurora OpenShift Platform is and how it came to be. It will also cover how we 
+are organized for developing software and our development process - including how we use the platform to build and 
+deploy our applications, and our guidelines and requirements to applications using the platform.
 
 
 ## A Short History 
@@ -84,6 +84,31 @@ applications across teams and environments.
  * Base Images: A set of Alpine Linux based Docker Images that all our applications are built from
 
 The following sections will describe these components in more detail.
+
+
+## How the Norwegian Tax Administration is Organized for Software Development
+
+TODO: To make sense of the features of the Aurora Console and AOC we need to describe how we are organized; projects
+the Line, applications/micro services, environments, Common Components, etc.
+
+
+## Image Build Process
+
+TODO: These are just things we need to remember to write about:
+ * Applications already exist on Nexus as Leveransepakker (Application Deliveries?)
+ * A Docker image (Architect) is triggered via an OpenShift BuildConfig using a Custom Build Strategy with the GAV of 
+ the Application Delivery to build.
+ * Based on the technology used in the Application Delivery (Java or Node) an appropriate base image is selected
+ * The application along with a few commonly used resources (logging config, etc) is added to the image
+ * The image is pushed to a central Docker Registry
+ * The image is tagged with the version of the builder image, the version of the base image and the application version,
+ collectively called the Aurora Version. Several other tags are also pushed (major, minor, patch).
+ * When an image is pushed, OpenShift ImageStreams may trigger application redeploys from ImageChange triggers.
+ * BuildConfigs may be triggered to rebuild images for specific application versions from ImageChange triggers from both
+ the Builder Image (Architect) and the base images. Rebuilding application images may in turn result in automatic 
+ redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
+ Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
+ redeployed by the platform.
 
 ### The architecture behind Aurora OpenShift
 
