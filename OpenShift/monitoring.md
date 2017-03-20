@@ -28,8 +28,6 @@ Knowing the overall status of an application and alerting on that status is requ
 
 In order to find the status for a component we check the OpenShift objects for that application and fetch some information from the health check.
 
-TODO: Insert rules for status here:
-
 All this information is aggregated into a status level of either DOWN, OBSERVE, HEALTHY or OFF.
 
 An endpoint exposing this information is periodically polled by an alerting system alerting the given ops personal if they need to take action.
