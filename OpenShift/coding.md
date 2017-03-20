@@ -3,14 +3,18 @@ title: Coding
 layout: page
 ---
 
-When coding an application or adapting an existing application to OpenShift the following issues must be addressed:
+Coding an application targeted at OpenShift is mostly like following the well known [12factor](https://12factor.net/) principles from Heroku.
 
+The following specific demands must also be followed:
  - Java is the only supported language
- - All code should be delivered as an assembly bundle containing a lib folder with all jars, and a metadata/openshift.json file
- - Fat-jars are not supported
- - An application must expose a management interface on port $HTTP_MANAGEMENT_PORT with information about health, info, prometheus metrics and env 
- - An application must handle SIGINT shutdown gracefully
- - An application must include the logback logfile from the $LOGBACK_FILE env var.
+    - Node is supported in the [Backend for Frontend](http://samnewman.io/patterns/architectural/bff/) case, but only with very limited functionality
+ - The delivery mechanism is a assembly bundle zip file uploaded to Nexus
+    - Fat-jars are not supported since we security check all dependencies with Nexus CLM
+ - All applications must implement the management interface demands
+    - must be served on a port of its own, not accessible to the internet
+    - must expose prometheus metrics, healthchecks, env and other info (build metadata, git metadata, dependencies and other links)
+    - must log using standard LOGBACK configuration
+ - The application must handle SIGTERM gracefully
  - A Jenkinsfile, preferably using the shared Jenkinsfile script
 
-We provide a reference application written in Spring boot that handles all the above demands out of the box.
+We provide a [Tailored Service Template](https://www.thoughtworks.com/radar/techniques/tailored-service-template) for a standard application that fullfill all these demands.
