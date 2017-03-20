@@ -10,7 +10,7 @@ The flow of the build logic is as follows:
   - find actual version of base image for AuroraVersion
   - fetch delivery bundle from Nexus
   - generate a start script 
-  - create a Dockerfile based upon the Wingnut docker image
+  - create a Dockerfile based upon one of our base docker image
   - build docker image
   - tag and push relevant tags
 
@@ -24,7 +24,7 @@ The start script we use is heavily inspired by several other similar solutions, 
  - enable jolokia agent for hawt.io integration in OpenShift
  - calculate classpath for the "leveransepakke"
  - trap the java process and rewrite java exit codes to work with OpenShift. 
-   - OpenShift expects 0 on SIGINT kill, java returns 143
+   - OpenShift expects 0 on SIGTERM kill, java returns 143
    - we use dumb-init to enable trapping
  - add JVM_OPTS or APPLICATION_ARGS from the metadata file in the "leveransepakke"
  - set MAIN_CLASS from metadata file in the "leveransepakke"
