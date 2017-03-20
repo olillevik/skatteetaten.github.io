@@ -58,6 +58,6 @@ The data is also available as an API and it used to send alerts when things are 
   * and there is no ongoing deploy
 * the average number of restarts for all instance is over DOWN limit
 
-=== OFF
+### OFF
 * there has never been a deploy
 * we want 0 instances and have 0
