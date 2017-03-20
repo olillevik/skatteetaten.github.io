@@ -4,10 +4,9 @@ layout: post
 category: OpenShift
 ---
 
-Setting up the required OpenShift objects for deploying an application is done via an api called boober.
-Boober can be configured/triggered either from aoc ( a cli config tool similar to oc ) or from a Web UI.
+Setting up the required OpenShift objects for deploying an application is done either via the CLI tool AOC or via the WebGUI Aurora Console. In order to do this some deploy time metadata is needed. 
 
-Boober is configured using several json files that are merged together into a single json file. This json description is then transformed into OpenShift objects via provided templates and some manual fixes/tweaking.
+This metadata is configured using several json files that are merged together into a single json file. This json description is then transformed into OpenShift objects via a seperate Controller.
 
 The following features can be configured in the boober files:
  - location of the artifact in Nexus that we are deploying
@@ -21,9 +20,9 @@ The following features can be configured in the boober files:
  - create other routes/automate opening traffic in network infrastructure (webseal/BiG-IP)
  - what version strategy you want to use
 
-The boober process is idempotent so calling it several times will only update the required parts in the old objects.
+The setup process is idempotent so calling it several times will only update the required parts in the old objects.
 
-The result of the boober process is illustrated in the diagram below. Here we are using major strategy and deploying all new releases under the 1 major tag.
+The result of this process is illustrated in the diagram below. Here we are using major strategy and deploying all new releases under the 1 major tag.
 
 
 ![Deploy](deploy.png)
