@@ -56,6 +56,8 @@ heavily staffed with external consultants, and when complete they are transferre
 maintain and support the software over time, usually decades, and will initially be staffed with personnel from both the 
 project and from the Line itself.
 
+TODO: Maybe some infrastructure stuff in here?
+
 Even before we started exploring OpenShift we knew that we would have to automate integration with our existing
 infrastructure regardless of the platform we would end up using - so doing some sort of common initiative to provide
 automation and integration services was given from the get-go. As we familiarized ourselves with OpenShift we saw
@@ -90,6 +92,7 @@ coordinate how the teams should use the platform and maintain reusable component
 ## What is the Aurora OpenShift Platform?
 
 TODO: Needs work
+
 The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
 automation, support application configuration, deployment and management, common application base images
 and common build and versioning mechanism for application archives and docker images.
@@ -108,7 +111,36 @@ applications across teams and environments.
 Coming sections will describe these components in more detail.
 
 
-## Image Build Process
+## How we Develop and Build our Applications
+
+### Coding and Application Build Requirements
+
+Coding an application targeted at the Aurora OpenShift Platform follows closely the principles of the 
+[Twelve-Factor App](https://12factor.net/) from Heroku. Additionally the following requirements must be met;
+
+ * The application must run on the JVM and, currently, must be written exclusively in Java. Node is supported when 
+ developing [Backends for Frontends](http://samnewman.io/patterns/architectural/bff/), but then only with very limited
+ functionality.
+ * The application must currently be built using Apache Maven.
+ * The delivery mechanism is an assembly bundle zip file uploaded to our internal Nexus registry.
+   * The delivery bundle must contain a lib folder with all the jars for the application.
+   * The delivery bundle must contain a metadata/openshift.json file to provide build time metadata to the application
+   image building process (Architect). This includes among other things information used to generate a start script for
+   the application and metadata used to label the Docker image.
+ * We support both versioned releases and snapshots, but versioned releases must follow the 
+ [Semantic Versioning](http://semver.org/) system.
+ * The application must implement our proprietary management interface. This interface is described in more detail
+ later.
+ 
+Additionally we prefer that the applications are built via Jenkins and that the source repository of the application
+contains a Jenkinsfile that describes the build process. Ideally, the Jenkinsfile uses our common Jenkins pipeline
+scripts (making the Jenkinsfile less than 10 lines of code).
+
+We provide a [Tailored Service Template](https://www.thoughtworks.com/radar/techniques/tailored-service-template) for a
+standard application that fulfill all these demands that teams building new applications can use to get started.
+
+
+### The Image Build Process
 
 TODO: These are just things we need to remember to write about:
  * Applications already exist on Nexus as Leveransepakker (Application Deliveries?)
@@ -125,6 +157,8 @@ TODO: These are just things we need to remember to write about:
  redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
  Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
  redeployed by the platform.
+
+
 
 ### The architecture behind Aurora OpenShift
 
@@ -168,3 +202,16 @@ TODO: These are just things we need to remember to write about:
  
  * Implementation details:
    - A description of the underlying components and their role in the Aurora OpenShift platform
+
+
+## Bits and Pieces
+
+
+ - All applications must implement the management interface demands
+    - must be served on a port of its own, not accessible to the internet
+    - must expose prometheus metrics, healthchecks, env and other info (build metadata, git metadata, dependencies and other links)
+    - must log using standard LOGBACK configuration
+ - The application must handle SIGTERM gracefully
+
+   * [Fat-jars](http://stackoverflow.com/questions/19150811/what-is-a-fat-jar) are not supported since we do a security
+   check on third party dependencies with Nexus IQ.
