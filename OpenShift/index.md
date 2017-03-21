@@ -168,9 +168,16 @@ recent version of any application when we release a new version of either Archit
 Architect is a Docker image built upon Alpine Linux that is responsible for building all our application images. It is
 designed to work as an OpenShift 
 [CustomBuilder](https://docs.openshift.com/container-platform/3.4/creating_images/custom.html) and is mostly triggered
-from BuildConfigs. It will download a prebuilt artifact from Nexus based on the groupId, artifactId and version (GAV)
+from BuildConfigs. It will download a prebuilt Delivery Bundle artifact from Nexus based on the groupId, artifactId and version (GAV)
 provided as parameters, inspect the metadata/openshift.json-file to determine the technology used by the application.
-Based on the technology used, a suitable base image will be selected and the build process determined.
+Based on the technology used, a suitable base image will be selected and the build process determined. The build
+process is implemented as a Dockerfile and will vary depending on the runtime technology used.
+
+#### Building Java Applications
+
+In addition to adding the Java application from the Delivery Bundle, a Java build will also add a custom certificate
+store and our common logback.xml configuration file. Applications are encouraged to use this logback-file instead of
+providing their own to make sure that they are in compliance with the logging requirements.
 
 For our Java applications Architect supports generating a start script based on a few parameters set in the 
 metadata/openshift.json-file. Though not a requirement at this time (applications may provide their own start script),
@@ -189,32 +196,20 @@ APPLICATION_ARGS from the openshift.json file and optionally enable remote debug
 The start script we use is heavily inspired by several other similar solutions, chief among them 
 [run-java-sh](https://github.com/fabric8io-images/run-java-sh).
 
-Provide a run script that loads configuration.
+#### Building Node Applications
 
-TODO: These are just things we need to remember to write about:
- * Based on the technology used in the Delivery Bundle (Java or Node) an appropriate base image is selected
- * The application along with a few commonly used resources (logging config, etc) is added to the image
- * The image is pushed to a central Docker Registry
- * The image is tagged with the version of the builder image, the version of the base image and the application version,
- collectively called the Aurora Version. Several other tags are also pushed (major, minor, patch).
- * When an image is pushed, OpenShift ImageStreams may trigger application redeploys from ImageChange triggers.
- * BuildConfigs may be triggered to rebuild images for specific application versions from ImageChange triggers from both
- the Builder Image (Architect) and the base images. Rebuilding application images may in turn result in automatic 
- redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
- Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
- redeployed by the platform.
+TODO: TBD
 
 
-The flow of the build logic is as follows:
-  - validate input
-  - find actual version of base image for AuroraVersion
-  - fetch delivery bundle from Nexus
-  - generate a start script 
-  - create a Dockerfile based upon one of our base docker image
-  - build docker image
-  - tag and push relevant tags
+#### Common Steps
 
-More details will be revealed when it is open sourced.
+In addition to generating application and technology specific start scripts we also provide a required wrapper script 
+that is the script that is the actual entry point of the application Docker image. This script will, among a few other 
+things, read configuration files that have been mounted into the container and make them available as environment 
+variables for the application. This process is described in more detail later.
+
+After the application Docker image has been built it is pushed to our internal Docker registry. We also tag the image
+with several version tags to support our deployment strategy. Our versioning strategy is described next. 
 
 
 ### The Java Base Image: Wingnut
@@ -223,6 +218,9 @@ TODO: Add something meaningful here
 
 
 ### Image Versioning Strategy
+
+ * The image is tagged with the version of the builder image, the version of the base image and the application version,
+ collectively called the Aurora Version. Several other tags are also pushed (major, minor, patch).
 
 When creating docker images with a dedicated builderImage and different base image we feel it is necessary to version 
 these in a way that makes it clear how to recreate the image at a later stage. The version scheme that is used can be seen 
@@ -304,3 +302,10 @@ The following tags are created:
 
    * [Fat-jars](http://stackoverflow.com/questions/19150811/what-is-a-fat-jar) are not supported since we do a security
    check on third party dependencies with Nexus IQ.
+
+ * When an image is pushed, OpenShift ImageStreams may trigger application redeploys from ImageChange triggers.
+ * BuildConfigs may be triggered to rebuild images for specific application versions from ImageChange triggers from both
+ the Builder Image (Architect) and the base images. Rebuilding application images may in turn result in automatic 
+ redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
+ Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
+ redeployed by the platform.
