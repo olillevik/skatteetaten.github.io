@@ -47,12 +47,27 @@ In December 2016 it was decided that as much possible of the Aurora OpenShift Pl
 an APL 2.0 compatible license.
 
 
-## What is the Aurora OpenShift Platform?
+## Requirements for the Aurora OpenShift Platform
+
+The Norwegian Tax Administration maintains millions of lines of code and employs X people in software development,
+IT operations, management and supporting roles. When the need for new software arises - to either replace existing
+systems or to handle new or changed responsibilities - a project is created for that purpose. The projects are often
+heavily staffed with external consultants, and when complete they are transferred to the Line. The Line will
+maintain and support the software over time, usually decades, and will initially be staffed with personnel from both the 
+project and from the Line itself.
 
 Even before we started exploring OpenShift we knew that we would have to automate integration with our existing
 infrastructure regardless of the platform we would end up using - so doing some sort of common initiative to provide
 automation and integration services was given from the get-go. As we familiarized ourselves with OpenShift we saw
 that there were several other areas that would also benefit from a central, common effort.
+
+It was important to us that supporting applications on the platform developed by different teams, often with personnel 
+unfamiliar with developing software for the NTA, should be pretty much the same regardless of who developed it. For
+instance, rolling out a Java Virtual Machine patch should be exactly the same for all applications, and it should be
+possible for us to roll out such a patch for all applications across all environments in one go. Similarly, the
+process of upgrading an application developed by one team deployed to a specific environment should be exactly the
+same for any other application developed by a completely different team. Additionally, we wanted configuration to be
+handled the same for all applications across all environments.
 
 One of the things that struck us after getting some experience with OpenShift was how flexible it was to work with.
 Although the platform certainly comes with its fair share of requirements and idiosyncrasies, we found that there was 
@@ -70,7 +85,11 @@ like;
 
 Going back and forth, we almost always ended up at "not a whole lot". It became pretty clear that a common effort to
 coordinate how the teams should use the platform and maintain reusable components and services was a good idea.
- 
+
+
+## What is the Aurora OpenShift Platform?
+
+TODO: Needs work
 The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
 automation, support application configuration, deployment and management, common application base images
 and common build and versioning mechanism for application archives and docker images.
@@ -87,12 +106,6 @@ applications across teams and environments.
  * Base Images: A set of Alpine Linux based Docker Images that all our applications are built from
 
 Coming sections will describe these components in more detail.
-
-
-## How the Norwegian Tax Administration is Organized for Software Development
-
-TODO: To make sense of the features of the Aurora Console and AOC we need to describe how we are organized; projects
-the Line, applications/micro services, environments, Common Components, etc.
 
 
 ## Image Build Process
