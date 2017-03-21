@@ -63,10 +63,13 @@ difficulties streamlining maintenance and deployment activities across teams. Al
 letting teams freely use OpenShift their own way. For instance, we were hard press to find good answers to questions
 like; 
  * What would be the benefit for teams to develop and maintain their own base image for their Java applications instead 
- of collaborate on one?
+ of collaborating on one?
  * What would be the benefit for teams to device their own Docker Image build processes instead of adopting a common one?
  * What would be the benefit for teams to develop and maintain their own scripts and tools for handing deployment and 
  configuration across different environments?
+
+Going back and forth, we almost always ended up at "not a whole lot". It became pretty clear that a common effort to
+coordinate how the teams should use the platform and maintain reusable components and services was a good idea.
  
 The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
 automation, support application configuration, deployment and management, common application base images
@@ -83,7 +86,7 @@ applications across teams and environments.
  * Architect: A Docker image that implements the image build process for all our supported runtime technologies
  * Base Images: A set of Alpine Linux based Docker Images that all our applications are built from
 
-The following sections will describe these components in more detail.
+Coming sections will describe these components in more detail.
 
 
 ## How the Norwegian Tax Administration is Organized for Software Development
