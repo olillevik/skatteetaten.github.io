@@ -263,8 +263,6 @@ We are in the process of adding a separate step in this process that includes se
 
 ### The architecture behind Aurora OpenShift
 
- * How to [code](coding.html) an application
- * How the application is [built](building.html) on Jenkins
  * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
  * How to [monitor](monitoring.html) your application to make sure it performs as expected
  
@@ -277,13 +275,6 @@ We are in the process of adding a separate step in this process that includes se
    - Section One: What is the Aurora OpenShift platform, what features are in it, why are they there and how do they work?
    - Section Two: Implementation details; Boober, the Database Hotel API, SKAP, Marjory, Wembley etc.
  
- * A significantly more meaty introduction that includes more background information (not necessarily in the same order);
-   - What is the responsibility of The Norwegian Tax Authority?
-   - A short history of the Aurora OpenShift platform (even before it was called the Aurora OpenShift platform)
-   - What are the problems the Aurora OpenShift platform set out to solve? Is it solving them right now? Why did we decide to build our own set of tools and abstractions on top of OpenShift and other relevant infrastructure components. Common Components, Business Applications, Application "clusters" - Environments (dozens of test and development envronments)
-   - What kinds of applications are/will be running on the Aurora OpenShift platform?
-   - An overview of the technology stack in use by the applications developed by the Norwegian Tax Authority.
- * An overview of the main features of the Aurora OpenShift platform (What is the Aurora OpenShift platform).
  * An overview of the main user facing Aurora OpenShift abstractions;
    - Leveransepakke (Delivery Bundle)
    - Base Image
