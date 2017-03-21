@@ -122,9 +122,10 @@ Coding an application targeted at the Aurora OpenShift Platform follows closely 
  developing [Backends for Frontends](http://samnewman.io/patterns/architectural/bff/), but then only with very limited
  functionality.
  * The application must currently be built using Apache Maven.
- * The delivery mechanism is an assembly bundle zip file uploaded to our internal Nexus registry.
-   * The delivery bundle must contain a lib folder with all the jars for the application.
-   * The delivery bundle must contain a metadata/openshift.json file to provide build time metadata to the application
+ * The delivery mechanism is an assembly bundle zip file uploaded to our internal Nexus registry. We call this zip file
+ a Leveransepakke (Delivery Bundle)
+   * The Delivery Bundle must contain a lib folder with all the jars for the application.
+   * The Delivery Bundle must contain a metadata/openshift.json file to provide build time metadata to the application
    image building process (Architect). This includes among other things information used to generate a start script for
    the application and metadata used to label the Docker image.
  * We support both versioned releases and snapshots, but versioned releases must follow the 
@@ -142,11 +143,23 @@ standard application that fulfill all these demands that teams building new appl
 
 ### The Image Build Process
 
+Once the Delivery Bundle has been uploaded to Nexus we trigger (or create) an OpenShift BuildConfig for that specific
+artifact (identified by the groupId and artifactId that was used when uploading to Nexus). We also provide the version
+of the artifact that was just built as a parameter to the build. The BuildConfig is configured to use the 
+OpenShift Container Platform’s [Custom build strategy](https://docs.openshift.com/container-platform/latest/dev_guide/builds/build_strategies.html#custom-strategy-options)
+and we have created our own Docker image, dubbed Architect, to build an application Docker image from the Delivery
+Bundle based on our Java base image, dubbed Wingnut. Both Architect and Wingnut are described in more detail below.
+
+In addition to passing parameters to Architect, the BuildConfig is also configured with two 
+[ImageChange triggers](https://docs.openshift.com/container-platform/latest/dev_guide/builds/index.html#image-change-triggers).
+One for Architect and one for Wingnut. This allows us to use OpenShift to automatically trigger a build of the most
+recent version of any application when either Architect or Wingnut changes.
+
+
+### The Application Image Builder: Architect
+
 TODO: These are just things we need to remember to write about:
- * Applications already exist on Nexus as Leveransepakker (Application Deliveries?)
- * A Docker image (Architect) is triggered via an OpenShift BuildConfig using a Custom Build Strategy with the GAV of 
- the Application Delivery to build.
- * Based on the technology used in the Application Delivery (Java or Node) an appropriate base image is selected
+ * Based on the technology used in the Delivery Bundle (Java or Node) an appropriate base image is selected
  * The application along with a few commonly used resources (logging config, etc) is added to the image
  * The image is pushed to a central Docker Registry
  * The image is tagged with the version of the builder image, the version of the base image and the application version,
@@ -157,6 +170,35 @@ TODO: These are just things we need to remember to write about:
  redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
  Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
  redeployed by the platform.
+
+Architect is a DockerImage built upon Alpine linux that works as an OpenShift [CustomBuilder](https://docs.openshift.com/container-platform/3.4/creating_images/custom.html)
+
+The flow of the build logic is as follows:
+  - validate input
+  - find actual version of base image for AuroraVersion
+  - fetch delivery bundle from Nexus
+  - generate a start script 
+  - create a Dockerfile based upon one of our base docker image
+  - build docker image
+  - tag and push relevant tags
+
+More details will be revealed when it is open sourced.
+
+
+## Start script
+The start script we use is heavily inspired by several other similar solutions, chief among them [run-java-sh](https://github.com/fabric8io-images/run-java-sh)
+ - Calculate XMX for the java process based upon a percent of cgroup memory (default 80%)
+ - enable debugging if a flag is set
+ - enable jolokia agent for hawt.io integration in OpenShift
+ - calculate classpath for the "leveransepakke"
+ - trap the java process and rewrite java exit codes to work with OpenShift. 
+   - OpenShift expects 0 on SIGTERM kill, java returns 143
+   - we use dumb-init to enable trapping
+ - add JVM_OPTS or APPLICATION_ARGS from the metadata file in the "leveransepakke"
+ - set MAIN_CLASS from metadata file in the "leveransepakke"
+
+
+### The Java Base Image: Wingnut
 
 
 
@@ -184,7 +226,7 @@ TODO: These are just things we need to remember to write about:
    - An overview of the technology stack in use by the applications developed by the Norwegian Tax Authority.
  * An overview of the main features of the Aurora OpenShift platform (What is the Aurora OpenShift platform).
  * An overview of the main user facing Aurora OpenShift abstractions;
-   - Leveransepakke (Application Delivery?)
+   - Leveransepakke (Delivery Bundle)
    - Base Image
    - Architect
    - Aurora Console
