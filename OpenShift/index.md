@@ -145,18 +145,51 @@ standard application that fulfill all these demands that teams building new appl
 
 Once the Delivery Bundle has been uploaded to Nexus we trigger (or create) an OpenShift BuildConfig for that specific
 artifact (identified by the groupId and artifactId that was used when uploading to Nexus). We also provide the version
-of the artifact that was just built as a parameter to the build. The BuildConfig is configured to use the 
+of the artifact that was just built as a parameter to the build.
+
+The BuildConfig is configured to use the 
 OpenShift Container Platform’s [Custom build strategy](https://docs.openshift.com/container-platform/latest/dev_guide/builds/build_strategies.html#custom-strategy-options)
 and we have created our own Docker image, dubbed Architect, to build an application Docker image from the Delivery
-Bundle based on our Java base image, dubbed Wingnut. Both Architect and Wingnut are described in more detail below.
+Bundle based on our Java base image, dubbed Wingnut. 
+
+In addition to building the application image, Architect is also responsible for tagging the produced image with 
+several application and platform specific version tags that is the underpinning of our flexible deployment strategy. 
+
+Architect, Wingnut, our versioning strategy and our deployment strategy are described in more detail below.
 
 In addition to passing parameters to Architect, the BuildConfig is also configured with two 
 [ImageChange triggers](https://docs.openshift.com/container-platform/latest/dev_guide/builds/index.html#image-change-triggers).
 One for Architect and one for Wingnut. This allows us to use OpenShift to automatically trigger a build of the most
-recent version of any application when either Architect or Wingnut changes.
+recent version of any application when we release a new version of either Architect or Wingnut.
 
 
 ### The Application Image Builder: Architect
+
+Architect is a Docker image built upon Alpine Linux that is responsible for building all our application images. It is
+designed to work as an OpenShift 
+[CustomBuilder](https://docs.openshift.com/container-platform/3.4/creating_images/custom.html) and is mostly triggered
+from BuildConfigs. It will download a prebuilt artifact from Nexus based on the groupId, artifactId and version (GAV)
+provided as parameters, inspect the metadata/openshift.json-file to determine the technology used by the application.
+Based on the technology used, a suitable base image will be selected and the build process determined.
+
+For our Java applications Architect supports generating a start script based on a few parameters set in the 
+metadata/openshift.json-file. Though not a requirement at this time (applications may provide their own start script),
+providing a mechanism for automatically generating a start script has a few major benefits;
+ * Getting a start script for Java right on OpenShift is actually quite hard. The script must make sure that the main 
+ process is properly backgrounded, while still handling signals like SIGTERM. It must also trap the Java process to 
+ rewrite application exit codes; for instance, Java exits with 143, while OpenShift expects properly terminated 
+ applications to return 0. Additionally -Xmx must be set in relation to the available cgroup memory. Our generated start
+ script handles all these issues.
+ * We require that the Jolokia agent is enabled for all Java processes to enable the hawt.io integration in OpenShift.
+ Our generated start script enables this by default.
+
+Additionally, the generated start script will create a deterministic class path from the lib folder, set JVM_OPTS and
+APPLICATION_ARGS from the openshift.json file and optionally enable remote debugging.
+
+The start script we use is heavily inspired by several other similar solutions, chief among them 
+[run-java-sh](https://github.com/fabric8io-images/run-java-sh).
+
+Provide a run script that loads configuration.
 
 TODO: These are just things we need to remember to write about:
  * Based on the technology used in the Delivery Bundle (Java or Node) an appropriate base image is selected
@@ -171,7 +204,6 @@ TODO: These are just things we need to remember to write about:
  Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
  redeployed by the platform.
 
-Architect is a DockerImage built upon Alpine linux that works as an OpenShift [CustomBuilder](https://docs.openshift.com/container-platform/3.4/creating_images/custom.html)
 
 The flow of the build logic is as follows:
   - validate input
@@ -185,20 +217,35 @@ The flow of the build logic is as follows:
 More details will be revealed when it is open sourced.
 
 
-## Start script
-The start script we use is heavily inspired by several other similar solutions, chief among them [run-java-sh](https://github.com/fabric8io-images/run-java-sh)
- - Calculate XMX for the java process based upon a percent of cgroup memory (default 80%)
- - enable debugging if a flag is set
- - enable jolokia agent for hawt.io integration in OpenShift
- - calculate classpath for the "leveransepakke"
- - trap the java process and rewrite java exit codes to work with OpenShift. 
-   - OpenShift expects 0 on SIGTERM kill, java returns 143
-   - we use dumb-init to enable trapping
- - add JVM_OPTS or APPLICATION_ARGS from the metadata file in the "leveransepakke"
- - set MAIN_CLASS from metadata file in the "leveransepakke"
-
-
 ### The Java Base Image: Wingnut
+
+TODO: Add something meaningful here
+
+
+### Image Versioning Strategy
+
+When creating docker images with a dedicated builderImage and different base image we feel it is necessary to version 
+these in a way that makes it clear how to recreate the image at a later stage. The version scheme that is used can be seen 
+in the following diagram
+
+![AuroraVersion](auroraVersion.png)
+
+The full version number contains information about the application code, the version of the build logic, the name of the base image and the version of the base image.
+It is now possible to know exactly the parts needed to rebuild it, or where to look for bugs.
+
+When tagging a built DockerImage the rules are different based upon the kind of release
+## Semantic release
+![Versioning](versioning.png)
+
+
+## Snapshot release
+When building a snapshot release you often want to just follow the latest snapshot built. In some cases you might want 
+to pin it to an exact build number
+
+The following tags are created:
+ - SNAPSHOT-**APPNAME**-**buildnumber**, build number is fetched from Nexus
+ -  **APPNAME**-SNAPSHOT
+
 
 
 
