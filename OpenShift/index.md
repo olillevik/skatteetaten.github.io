@@ -229,9 +229,8 @@ can be seen in the diagram below;
 
 ![AuroraVersion](auroraVersion.png)
 
-In addition to the AuroraVersion the final image is also tagged with several other tags based on the application 
-version. When the application is a semver compliant version we push individual tags for only the major version,
-for only the major and minor version combined, for the major, minor and patch version combined, and finally the
+When the application has a semver compliant version we additionally push individual tags for the major version,
+for the major and minor version combined, for the major, minor and patch version combined, and finally the
 latest tag. An example is provided in the following diagram;
 
 ![Versioning](versioning.png)
@@ -241,6 +240,25 @@ A snapshot version is a version string that ends with the literal "-SNAPSHOT", l
 snapshot tags. Using "some_new_feature-SNAPSHOT" as an example we push
  * SNAPSHOT-some_new_feature-{buildNumber}, where the buildNumber is fetched from Nexus
  * some_new_feature-SNAPSHOT
+
+By applying this versioning strategy to our Docker images we in turn get tremendous flexibility when it comes to
+deploying and patching our applications on OpenShift. Our deployment and patching strategy is described next.
+
+
+### Deployment and Patching Strategy
+
+Docker containers are immutable so we do not patch them in the standard sense of the word.
+
+When the base image wingnut or the build logic architect changes we need to rebuild and redeploy lots of contains to fix security issues or other bugs.
+
+This is done the following way
+ - all BuildConfigs that are generated in the Jenkinsfile will trigger on changes to architect or wingnut
+ - the version in the BuildConfig is always the latest semantic release
+ - this version will be rebuilt and new tags will be pushed to the DockerRegistry
+ - all deployments that are not pinned will then be redeployed if that are using this latest version. 
+
+Improvement in the works:
+We are in the process of adding a separate step in this process that includes setting up a one-shot environment on OpenShift with the given component to do a regression check of the new baseimage/buildlogic.
 
 
 ### The architecture behind Aurora OpenShift
