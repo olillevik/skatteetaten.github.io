@@ -337,13 +337,12 @@ The need for a custom command line client became apparent when we saw that the t
 scripts for deploying their applications across different environments. These scripts quickly became quite complex,
 and while basically solving the same problems, they were implemented differently. A custom command line client would
 also allow us to more easily make sure that the applications were deployed and configured the same, a requirement
-for the Aurora Console, our custom web UI, for managing
+for the Aurora Console, our custom web UI, to be able to create common functionality for applications and 
+environments across teams. Over time, AOC matured into a tool not only for coordinating deployments to OpenShift, but 
+also for triggering other infrastructure automation tasks.
 
-TODO: 
- * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
-
-Setting up the required OpenShift objects for deploying an application is done either via the CLI tool AOC or via the 
-WebGUI Aurora Console. In order to do this some deploy time metadata is needed. 
+The first versions of AOC interacted with OpenShift and supporting infrastructure directly, and though useful, it was 
+hard to extend, reuse functionality and roll out fixes.
 
 The following features can be configured in the deploy time metadata:
  - location of the artifact in Nexus that we are deploying
