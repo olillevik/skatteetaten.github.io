@@ -248,8 +248,28 @@ deploying and patching our applications on OpenShift. Our deployment and patchin
 
 ### Deployment and Patching Strategy
 
-When deploying new applications we always use our proprietary AOC command line tool. This tool ensures that all
-deployed applications follow the same basic pattern. AOC is described in more detail later 
+When deploying new applications to OpenShift we always use our proprietary AOC command line tool. This tool ensures that all
+deployed applications follow the same basic pattern. AOC is described in depth later so we will not go
+into all the details here, but for the purposes of describing our deployment and patching strategy we need to highlight
+a couple of the objects that AOC generates. 
+
+Based on the configuration files given to AOC, we generate the OpenShift objects that are required to run the
+application. We generate one 
+[ImageStream](https://docs.openshift.com/container-platform/latest/architecture/core_concepts/builds_and_image_streams.html#image-streams)
+for each application we deploy. This ImageStream contains one (and only one) scheduled tag. We then generate a
+[DeploymentConfig](https://docs.openshift.com/container-platform/latest/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations)
+with a single container that uses the previously generated ImageStream and scheduled tag as its image reference. To
+deploy the application we simply change the Docker tag that the scheduled tag in the ImageStream points to.
+
+* use the full **AuroraVersion** of a release to pin the deployment to that release. It will never be automatically bumped.
+* use **latest** to always get the latest semantic release deployed
+* use **SNAPSHOT-_branchname_** to get the latest build from a branch
+* use *1* to get all new releases in the 1 tree, all new features and bugfixes but no breaking changes
+* use *1.1* to get all new bugfixes for 1.1 release but no new features
+* use *1.1.1* to get no new code, but only updates if the infrastructure changes. 
+
+For all strategies except the first there will be triggered a new deploy if there is [infrastructure changes](patching.html) and your strategy is running the latest built release.
+
 
 Docker containers are immutable so we do not patch them in the standard sense of the word.
 

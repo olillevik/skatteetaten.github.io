@@ -24,15 +24,3 @@ The result of this process is illustrated in the diagram below. Here we are usin
 
 
 ![Deploy](deploy.png)
-
-## Versioning strategies
-Multiple tags are [pushed for a release](versioning.html). When specifying what version to deploy in the boober configuration you can choose several different strategies.
-
-* use the full **AuroraVersion** of a release to pin the deployment to that release. It will never be automatically bumped.
-* use **latest** to always get the latest semantic release deployed
-* use **SNAPSHOT-_branchname_** to get the latest build from a branch
-* use *1* to get all new releases in the 1 tree, all new features and bugfixes but no breaking changes
-* use *1.1* to get all new bugfixes for 1.1 release but no new features
-* use *1.1.1* to get no new code, but only updates if the infrastructure changes. 
-
-For all strategies except the first there will be triggered a new deploy if there is [infrastructure changes](patching.html) and your strategy is running the latest built release.
