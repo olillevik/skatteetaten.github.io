@@ -113,7 +113,7 @@ Coming sections will describe these components in more detail.
 
 ## How we Develop and Build our Applications
 
-### Coding and Application Build Requirements
+### Coding and Application Build Requirements: Delivery Bundle
 
 Coding an application targeted at the Aurora OpenShift Platform follows closely the principles of the 
 [Twelve-Factor App](https://12factor.net/) from Heroku. Additionally the following requirements must be met;
@@ -168,18 +168,19 @@ recent version of any application when we release a new version of either Archit
 Architect is a Docker image built upon Alpine Linux that is responsible for building all our application images. It is
 designed to work as an OpenShift 
 [CustomBuilder](https://docs.openshift.com/container-platform/3.4/creating_images/custom.html) and is mostly triggered
-from BuildConfigs. It will download a prebuilt Delivery Bundle artifact from Nexus based on the groupId, artifactId and version (GAV)
-provided as parameters, inspect the metadata/openshift.json-file to determine the technology used by the application.
-Based on the technology used, a suitable base image will be selected and the build process determined. The build
-process is implemented as a Dockerfile and will vary depending on the runtime technology used.
+from BuildConfigs. It will download a prebuilt Delivery Bundle artifact from Nexus based on the groupId, artifactId and
+version (GAV) provided as parameters and inspect the metadata/openshift.json-file in the bundle to determine the 
+technology used by the application. Based on the technology used, a suitable base image will be selected and the build 
+process determined. The build processes for the different technologies are implemented as generated Dockerfiles and will
+vary depending on the runtime technology used.
 
 #### Building Java Applications
 
 In addition to adding the Java application from the Delivery Bundle, a Java build will also add a custom certificate
-store and our common logback.xml configuration file. Applications are encouraged to use this logback-file instead of
-providing their own to make sure that they are in compliance with the logging requirements.
+store and our common logback.xml configuration file to the generated image. Applications are encouraged to use this 
+logback-file instead of providing their own to make sure that they are in compliance with the logging requirements.
 
-For our Java applications Architect supports generating a start script based on a few parameters set in the 
+For our Java applications, Architect supports generating a start script based on a few parameters set in the 
 metadata/openshift.json-file. Though not a requirement at this time (applications may provide their own start script),
 providing a mechanism for automatically generating a start script has a few major benefits;
  * Getting a start script for Java right on OpenShift is actually quite hard. The script must make sure that the main 
@@ -204,12 +205,12 @@ TODO: TBD
 #### Common Steps
 
 In addition to generating application and technology specific start scripts we also provide a required wrapper script 
-that is the script that is the actual entry point of the application Docker image. This script will, among a few other 
+that acts as the actual entry point of the application Docker image. This script will, among a few other 
 things, read configuration files that have been mounted into the container and make them available as environment 
 variables for the application. This process is described in more detail later.
 
 After the application Docker image has been built it is pushed to our internal Docker registry. We also tag the image
-with several version tags to support our deployment strategy. Our versioning strategy is described next. 
+with several version tags to support our deployment strategy. Our versioning strategy is described below. 
 
 
 ### The Java Base Image: Wingnut
@@ -236,7 +237,7 @@ latest tag. An example is provided in the following diagram;
 ![Versioning](versioning.png)
 
 A snapshot version is a version string that ends with the literal "-SNAPSHOT", like "1.0.0-SNAPSHOT" or
-"some_new_feature-SNAPSHOT". When building a snapshot release, in addition to the AuroraVersion we also push two 
+"some_new_feature-SNAPSHOT". When building a snapshot release, in addition to the AuroraVersion, we also push two 
 snapshot tags. Using "some_new_feature-SNAPSHOT" as an example we push
  * SNAPSHOT-some_new_feature-{buildNumber}, where the buildNumber is fetched from Nexus
  * some_new_feature-SNAPSHOT
@@ -246,6 +247,9 @@ deploying and patching our applications on OpenShift. Our deployment and patchin
 
 
 ### Deployment and Patching Strategy
+
+When deploying new applications we always use our proprietary AOC command line tool. This tool ensures that all
+deployed applications follow the same basic pattern. AOC is described in more detail later 
 
 Docker containers are immutable so we do not patch them in the standard sense of the word.
 
@@ -261,56 +265,49 @@ Improvement in the works:
 We are in the process of adding a separate step in this process that includes setting up a one-shot environment on OpenShift with the given component to do a regression check of the new baseimage/buildlogic.
 
 
-### The architecture behind Aurora OpenShift
+### Application Configuration Strategy
 
- * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
- * How to [monitor](monitoring.html) your application to make sure it performs as expected
- 
- 
-## Suggested todo list
-
- * Develop a proper outline (table of contents) in the index file. With the current structure some of the pages are only accessible via other sub pages - which can make them hard to find and get a complete overview of the documentation.
- 
- * Suggestion: A two section document;
-   - Section One: What is the Aurora OpenShift platform, what features are in it, why are they there and how do they work?
-   - Section Two: Implementation details; Boober, the Database Hotel API, SKAP, Marjory, Wembley etc.
- 
- * An overview of the main user facing Aurora OpenShift abstractions;
-   - Leveransepakke (Delivery Bundle)
-   - Base Image
-   - Architect
-   - Aurora Console
-   - AOC and the AOC configuration files
-   - The Aurora API (?) and its main resources. Not an established term, but I think it will serve us better in the long run to view the common collection of endpoints provided by "our" platform as a single uniform API regardless of which underlying component, be it Boober, Sprocket, the Aurora Console or any other component, implements a specific endpoint/resource.
- * The anatomy of an Aurora Application
-   - Application requirements (runtime platform, management, etc)
-   - Structure of Leveransepakke
-   - From Leveransepakke to Application Image
-   - Application versioning (The Aurora Version) and tagging
-   - Application Configuration
-   - Build process (Jenkins)
- * Deploying an application and sets of applications with AOC
- * Managing applications with AOC and the Aurora Console
- 
- * Implementation details:
-   - A description of the underlying components and their role in the Aurora OpenShift platform
-
-
-## Bits and Pieces
-
-
- - All applications must implement the management interface demands
-    - must be served on a port of its own, not accessible to the internet
-    - must expose prometheus metrics, healthchecks, env and other info (build metadata, git metadata, dependencies and other links)
-    - must log using standard LOGBACK configuration
- - The application must handle SIGTERM gracefully
-
-   * [Fat-jars](http://stackoverflow.com/questions/19150811/what-is-a-fat-jar) are not supported since we do a security
-   check on third party dependencies with Nexus IQ.
-
+TODO: Need some good stuff in here
  * When an image is pushed, OpenShift ImageStreams may trigger application redeploys from ImageChange triggers.
  * BuildConfigs may be triggered to rebuild images for specific application versions from ImageChange triggers from both
  the Builder Image (Architect) and the base images. Rebuilding application images may in turn result in automatic 
  redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
  Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
  redeployed by the platform.
+
+
+## Other Components
+
+TODO: Bad title
+
+
+### AOC
+
+TODO: 
+ * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
+
+
+### Aurora Console
+
+TODO: 
+ * Deploying an application and sets of applications with AOC
+ * Managing applications with AOC and the Aurora Console
+
+
+### The Aurora API
+
+TODO: Maybe?
+Main resources. Not an established term, but I think it will serve us better in the long run to view the common 
+collection of endpoints provided by "our" platform as a single uniform API regardless of which underlying component, 
+be it Boober, Sprocket, the Aurora Console or any other component, implements a specific endpoint/resource.
+
+
+## Application Monitoring
+
+TODO: Maybe we can skip this?
+
+ * How to [monitor](monitoring.html) your application to make sure it performs as expected
+ - All applications must implement the management interface demands
+    - must be served on a port of its own, not accessible to the internet
+    - must expose prometheus metrics, healthchecks, env and other info (build metadata, git metadata, dependencies and other links)
+    - must log using standard LOGBACK configuration
