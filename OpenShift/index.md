@@ -287,18 +287,15 @@ AuroraVersion string.
 
 Like we mentioned in the section "The Image Build Process" the OpenShift BuildConfig is configured with two 
 ImageChange triggers. One for Architect and one for the base image. This allows us to automatically retrigger the build
-of an application image when new versions of either Architect or the base image are released.
+of an application image when new versions of either Architect or the base image are released. Commonly, when releasing 
+for instance a new version of Wingnut, our base image for Java, with a new Java Runtime Environment version, hundreds of
+application images are automatically rebuilt - and in many cases, based on the deployment strategy for the individual
+applications, automatically redeployed by the platform.
 
 
 ### Application Configuration Strategy
 
 TODO: Need some good stuff in here
- * When an image is pushed, OpenShift ImageStreams may trigger application redeploys from ImageChange triggers.
- * BuildConfigs may be triggered to rebuild images for specific application versions from ImageChange triggers from both
- the Builder Image (Architect) and the base images. Rebuilding application images may in turn result in automatic 
- redeploys from ImageChange triggers. Commonly, when releasing for instance a new base image for Java with a new Java
- Runtime Environment version, hundreds of application images are automatically rebuilt - and in some cases automatically
- redeployed by the platform.
 
 
 ## Other Components
@@ -311,7 +308,8 @@ TODO: Bad title
 TODO: 
  * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
 
-Setting up the required OpenShift objects for deploying an application is done either via the CLI tool AOC or via the WebGUI Aurora Console. In order to do this some deploy time metadata is needed. 
+Setting up the required OpenShift objects for deploying an application is done either via the CLI tool AOC or via the 
+WebGUI Aurora Console. In order to do this some deploy time metadata is needed. 
 
 The following features can be configured in the deploy time metadata:
  - location of the artifact in Nexus that we are deploying
