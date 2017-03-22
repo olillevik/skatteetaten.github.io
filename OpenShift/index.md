@@ -4,13 +4,18 @@ layout: home
 
 # The Aurora OpenShift Platform
 
+## TODOs
+
+ * Need a section on the open source strategy of the NTA.
+ 
+
 ## Introduction
 
-Welcome to the Aurora OpenShift Platform of [The Norwegian Tax Administration (TNTA)](http://skatteetaten.no/en/person/) on GitHub. The Norwegian Tax 
+Welcome to the Aurora OpenShift Platform of the [Norwegian Tax Administration (NTA)](http://skatteetaten.no/en/person/) on GitHub. The Norwegian Tax 
 Administration is an agency under the authority of the Ministry of Finance and is responsible for taxation and the 
 population register. 
 
-These pages on GitHub is the home of the initiative to open source the platform that runs part of the TNTA's digital tax
+These pages on GitHub are the home of the initiative to open source the platform that runs part of the NTA's digital tax
 and customs services; the Aurora OpenShift Platform.
 
 This document will describe what the Aurora OpenShift Platform is and how it came to be. It will also cover how we 
@@ -21,7 +26,7 @@ deploy our applications, and our guidelines and requirements to applications usi
 ## A Short History 
 
 The work on what would become the Aurora OpenShift Platform started late in 2014 in the wake of a major project to 
-modernize the handling of the foundational data for most tax calculations in Norway - MAG. The MAG project transitioned
+modernize the handling of the foundational data for most tax calculations in Norway. The project transitioned
 the Norwegian Tax Administration from using Oracle Forms, PL/SQL and Java EE into using simpler Java SE technologies
 with embedded containers. It also identified the need for a common platform for running and handling the vast 
 amount of micro services across development, test and reference environments that the project produced, and that would 
@@ -49,7 +54,7 @@ an APL 2.0 compatible license.
 
 ## Requirements for the Aurora OpenShift Platform
 
-The Norwegian Tax Administration maintains millions of lines of code and employs X people in software development,
+The Norwegian Tax Administration maintains millions of lines of code and employs 800 people in software development,
 IT operations, management and supporting roles. When the need for new software arises - to either replace existing
 systems or to handle new or changed responsibilities - a project is created for that purpose. The projects are often
 heavily staffed with external consultants, and when complete they are transferred to the Line. The Line will
@@ -93,7 +98,7 @@ coordinate how the teams should use the platform and maintain reusable component
 
 TODO: Needs work
 
-The Aurora OpenShift Platform is everything The Norwegian Tax Administration has developed to support infrastructure
+The Aurora OpenShift Platform is everything the Norwegian Tax Administration has developed to support infrastructure
 automation, support application configuration, deployment and management, common application base images
 and common build and versioning mechanism for application archives and docker images.
 
@@ -310,11 +315,11 @@ schema at the same time. For instance, version 1.0.0 of an application will ofte
 
 What we ended up doing was to let AOC, from the AOC config (described later), create a ConfigMap with a file that 
 contains the configuration for the application in the environment it is being deployed to. This configuration file is 
-mounted in the application Docker container by the DeploymentConfig and read by the entrypoint wrapper script 
+mounted in the application Docker container by the DeploymentConfig, read by the entrypoint wrapper script 
 (described in "The Application Image Builder: Architect") and exposed as environment variables for the application.
 
 Using only environment variables for configuration allows us to configure applications using completely different
-runtime technologies the same way. In addition, many of our existing applications running outside OpenShift was already
+runtime technologies the same way. In addition, many of our existing applications running outside OpenShift were already
 configured using environment variables, and thus would require little modification to their configuration handling to 
 adapt to running on OpenShift. And, finally, we have no application runtime dependencies to third party services for
 configuration that may or may not be available at application startup, significantly reducing risk.
@@ -324,12 +329,15 @@ configuration that may or may not be available at application startup, significa
 ----
 
 
-## Other Components
+## AOC
 
-TODO: Bad title
+AOC (Aurora OpenShift CLI) is our custom command line client for deploying applications to OpenShift.
 
-
-### AOC
+The need for a custom command line client became apparent when we saw that the teams started developing their own
+scripts for deploying their applications across different environments. These scripts quickly became quite complex,
+and while basically solving the same problems, they were implemented differently. A custom command line client would
+also allow us to more easily make sure that the applications were deployed and configured the same, a requirement
+for the Aurora Console, our custom web UI, for managing
 
 TODO: 
  * How to [configure and setup](setup.html) the infrastructure on OpenShift to deploy your application
@@ -357,14 +365,14 @@ The result of this process is illustrated in the diagram below. Here we are usin
 ![Deploy](deploy.png)
 
 
-### Aurora Console
+## Aurora Console
 
 TODO: 
  * Deploying an application and sets of applications with AOC
  * Managing applications with AOC and the Aurora Console
 
 
-### The Aurora API
+## The Aurora API
 
 TODO: Maybe?
 Main resources. Not an established term, but I think it will serve us better in the long run to view the common 
