@@ -258,31 +258,36 @@ application. We generate one
 [ImageStream](https://docs.openshift.com/container-platform/latest/architecture/core_concepts/builds_and_image_streams.html#image-streams)
 for each application we deploy. This ImageStream contains one (and only one) scheduled tag. We then generate a
 [DeploymentConfig](https://docs.openshift.com/container-platform/latest/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations)
-with a single container that uses the previously generated ImageStream and scheduled tag as its image reference. To
-deploy the application we simply change the Docker tag that the scheduled tag in the ImageStream points to.
+with a single container that uses the previously generated ImageStream and scheduled tag as its image reference. We
+also register a ImageChangeTrigger to trigger redeploys when the tag in the ImageStream changes. 
 
-* use the full **AuroraVersion** of a release to pin the deployment to that release. It will never be automatically bumped.
-* use **latest** to always get the latest semantic release deployed
-* use **SNAPSHOT-_branchname_** to get the latest build from a branch
-* use *1* to get all new releases in the 1 tree, all new features and bugfixes but no breaking changes
-* use *1.1* to get all new bugfixes for 1.1 release but no new features
-* use *1.1.1* to get no new code, but only updates if the infrastructure changes. 
+To deploy the application we simply change the Docker tag that the scheduled tag in the ImageStream points to to the
+application version we want to run. The application version can be any of the tags we have previously tagged the image
+with (see "Image Versioning Strategy: The AuroraVersion"), and since the tag in the image stream is scheduled, it will
+pick up any changes to the tag that may occur as a result of building new application images. For instance, we can set 
+the scheduled tag in the ImageStream to any of the following tags to determine the deployment strategy for a particular
+application:
 
-For all strategies except the first there will be triggered a new deploy if there is [infrastructure changes](patching.html) and your strategy is running the latest built release.
+In the following list, the term infrastructure refers to the versions of the base image and Architect in the
+AuroraVersion string.
 
+ * use **latest** to automatically deploy the latest image with a semver compliant version
+ * use *1* to automatically deploy the newest image for a major version (any 1.x.y version) of an application. Following
+ the semver semantics, this includes all new features and bugfixes but no breaking changes. Infrastructure changes are
+ also included.
+ * use *1.1* to automatically deploy the newest image for a minor version (any 1.1.x version) of an application.
+ Following the semver semantics, this includes all bugfixes. Infrastructure changes are also included.
+ * use *1.1.1* to automatically deploy the newest image for a patch version (any 1.1.1 version) of an application.
+ Following the semver semantics, this actually excludes any other application version from being deployed, and hence,
+ the application will only be deployed if the infrastructure changes.
+ * use the full **AuroraVersion** of a release to pin the deployment to that specific combination of application version
+ and infrastructure. OpenShift will never automatically redeploy this application since the AuroraVersion tag will never
+ change for an image.
+ * use **SNAPSHOT-versionname** to get the latest build from a snapshot
 
-Docker containers are immutable so we do not patch them in the standard sense of the word.
-
-When the base image wingnut or the build logic architect changes we need to rebuild and redeploy lots of contains to fix security issues or other bugs.
-
-This is done the following way
- - all BuildConfigs that are generated in the Jenkinsfile will trigger on changes to architect or wingnut
- - the version in the BuildConfig is always the latest semantic release
- - this version will be rebuilt and new tags will be pushed to the DockerRegistry
- - all deployments that are not pinned will then be redeployed if that are using this latest version. 
-
-Improvement in the works:
-We are in the process of adding a separate step in this process that includes setting up a one-shot environment on OpenShift with the given component to do a regression check of the new baseimage/buildlogic.
+Like we mentioned in the section "The Image Build Process" the OpenShift BuildConfig is configured with two 
+ImageChange triggers. One for Architect and one for the base image. This allows us to automatically retrigger the build
+of an application image when new versions of either Architect or the base image are released.
 
 
 ### Application Configuration Strategy
