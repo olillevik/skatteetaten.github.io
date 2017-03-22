@@ -292,6 +292,10 @@ for instance a new version of Wingnut, our base image for Java, with a new Java 
 application images are automatically rebuilt - and in many cases, based on the deployment strategy for the individual
 applications, automatically redeployed by the platform.
 
+*Anything below the line are just notes*
+
+----
+
 
 ### Application Configuration Strategy
 
