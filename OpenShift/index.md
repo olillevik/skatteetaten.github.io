@@ -234,6 +234,8 @@ When the application has a semver compliant version we additionally push individ
 for the major and minor version combined, for the major, minor and patch version combined, and finally the
 latest tag. An example is provided in the following diagram;
 
+TODO: Replace diagram with description of tags
+
 ![Versioning](versioning.png)
 
 A snapshot version is a version string that ends with the literal "-SNAPSHOT", like "1.0.0-SNAPSHOT" or
@@ -292,14 +294,34 @@ for instance a new version of Wingnut, our base image for Java, with a new Java 
 application images are automatically rebuilt - and in many cases, based on the deployment strategy for the individual
 applications, automatically redeployed by the platform.
 
-*Anything below the line are just notes*
-
-----
-
 
 ### Application Configuration Strategy
 
-TODO: Need some good stuff in here
+Arriving at a strategy for configuring our applications for particular environments (development, test, etc) was a 
+long and winding road, taking us back to the drawing board several times. We explored many of the off the shelf 
+solutions for handling this, but in the end we did not want a runtime dependency for all our applications on a 
+configuration service. In addition we struggled to find a product that actually suited our needs and fit into our
+network infrastructure.
+
+We wanted a solution that would let us maintain several sets of configurations for an application, each set tailored
+to the environment the application would run in, and we also needed to support several versions of the configuration
+schema at the same time. For instance, version 1.0.0 of an application will often be configured differently than version
+2.0.0 of that same application.
+
+What we ended up doing was to let AOC, from the AOC config (described later), create a ConfigMap with a file that 
+contains the configuration for the application in the environment it is being deployed to. This configuration file is 
+mounted in the application Docker container by the DeploymentConfig and read by the entrypoint wrapper script 
+(described in "The Application Image Builder: Architect") and exposed as environment variables for the application.
+
+Using only environment variables for configuration allows us to configure applications using completely different
+runtime technologies the same way. In addition, many of our existing applications running outside OpenShift was already
+configured using environment variables, and thus would require little modification to their configuration handling to 
+adapt to running on OpenShift. And, finally, we have no application runtime dependencies to third party services for
+configuration that may or may not be available at application startup, significantly reducing risk.
+
+*Anything below the line are just notes*
+
+----
 
 
 ## Other Components
