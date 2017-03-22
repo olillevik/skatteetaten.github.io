@@ -1,5 +1,0 @@
----
-title: Versioning
-layout: page
----
-
